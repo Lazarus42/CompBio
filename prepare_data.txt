@@ -1,0 +1,13 @@
+The data was prepared with the following steps:
+
+# Copy over THP1 monocyte optimal peaks
+cp /projects/pfenninggroup/bloodAD/THP1_ATAC/20221116_THP1_ATAC_Novaseq/idr_peaks_hg38/THP1_monocytes.idr.optimal_peak.narrowPeak.gz .
+
+# Expand peaks to 1000 bp and discard peaks that cannot be expanded 
+python scripts/preprocessing.py expand_peaks -l 1000 -i THP1_monocytes.idr.optimal_peak.narrowPeak -o THP1_monocyte.idr.optimal_peak.bed
+
+# Subtract overlapping peaks in THP1 monocyte bed file from LCL training bed file to get peaks open in THP1 but closed in LCL
+python /home/sjgibson/atac_data_pipeline/scripts/preprocessing.py subtract --include_files THP1_monocytes.idr.expanded_optimal_peaks.bed --exclude_files /home/sjgibson/data/lcl/fold3/train.bed -o THP1_not_in_LCL_expanded_peaks.bed
+
+# Set the 6th column, indexing from 0, to 0 and name this bed file 
+awk 'BEGIN{OFS="\t"}{$7=0; print}' THP1_not_in_LCL_expanded_peaks.bed > THP1_absent_LCL_expanded_peaks.bed

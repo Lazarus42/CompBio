@@ -1,4 +1,3 @@
-
 def write_bed_from_fasta(fasta_file, bed_file, seq_length):
     with open(fasta_file, 'r') as file, open(bed_file, 'w') as output_file:
         # loop through and write each header to a new bed file
